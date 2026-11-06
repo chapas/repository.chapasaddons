@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.chapasaddons" name="chapas Addons Repository" version="1.0.0" provider-name="chapas">
+  <extension point="xbmc.addon.repository" name="chapas Addons">
+	<dir>
+	  <info compressed="false">https://raw.githubusercontent.com/chapas/repository.chapasaddons/main/zips/addons.xml</info>
+	  <checksum>https://raw.githubusercontent.com/chapas/repository.chapasaddons/main/zips/addons.xml.md5</checksum>
+	  <datadir zip="true">https://raw.githubusercontent.com/chapas/repository.chapasaddons/main/zips/</datadir>
+	</dir>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+	<summary lang="en">chapas Kodi addons repository</summary>
+	<description lang="en">Kodi addons by chapas, including AI Subtitle.</description>
+	<platform>all</platform>
+	<license>GPL-3.0-only</license>
+	<source>https://github.com/chapas/repository.chapasaddons</source>
+  </extension>
+</addon>
