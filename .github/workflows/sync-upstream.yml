@@ -33,7 +33,7 @@ jobs:
         env:
           UPSTREAM_SHA: ${{ steps.upstream.outputs.latest }}
         run: |
-          python scripts/build_repo.py
+          python scripts/bump_addons.py
           echo "$UPSTREAM_SHA" > upstream.sha
 
       - name: Commit and push
