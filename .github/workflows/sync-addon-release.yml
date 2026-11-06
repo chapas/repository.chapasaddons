@@ -1,0 +1,51 @@
+name: Sync addon from latest release
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check latest addon release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release view --repo chapas/service.subtitles.aisubtitle --json tagName --jq .tagName)
+          current=$(cat addon.release 2>/dev/null || echo "")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if [ "$tag" = "$current" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download addon zip from latest release
+        if: steps.release.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          rm -f zips/service.subtitles.aisubtitle/*.zip
+          gh release download "$TAG" --repo chapas/service.subtitles.aisubtitle --pattern 'service.subtitles.aisubtitle-*.zip' --dir zips/service.subtitles.aisubtitle
+          python scripts/publish_index.py
+          echo "$TAG" > addon.release
+
+      - name: Commit and push
+        if: steps.release.outputs.changed == 'true'
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish AI Subtitle ${TAG}"
+          git push
